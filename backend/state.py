@@ -1,5 +1,5 @@
 from langchain_core.messages import AnyMessage
-from typing import Annotated, TypedDict, List
+from typing import Annotated, Dict, TypedDict, List
 from proto import Enum
 from pydantic import BaseModel, Field, field_validator
 import operator
@@ -16,6 +16,35 @@ class FocusType(str, Enum):
     TECHNIQUE = "Technique"
     POWER = "Power"
     RECOVERY = "Recovery"
+    
+class Vitals(BaseModel):
+    age: str
+    height: str
+    weight: str
+
+class StrengthKPIs(BaseModel):
+    backsquat: str
+    deadlift: str
+    benchpress: str
+    powerclean: str
+    snatch: str
+    verticalleap: str
+
+class SwimData(BaseModel):
+    events: List[str]
+    times: Dict[str, str]
+
+class Meet(BaseModel):
+    name: str
+    date: str
+
+class AthleteProfile(BaseModel):
+    vitals: Vitals
+    kpis: StrengthKPIs
+    swimData: SwimData
+    meets: List[Meet]
+    agentNotes: str
+    
 
 class AgentState(TypedDict):
     

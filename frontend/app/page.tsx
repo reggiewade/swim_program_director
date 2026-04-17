@@ -31,6 +31,18 @@ const eventGroups = [
   { label: "Medley", items: ["100 IM", "200 IM", "400 IM"] },
 ];
 
+interface SkillOption {
+  label: string;
+  value: string;
+}
+
+const skillLevels: SkillOption[] = [
+  { label: "Recreational", value: "recreational" },
+  { label: "Developmental", value: "developmental" },
+  { label: "Competitive", value: "competitive" },
+  { label: "Elite", value: "elite" }
+];
+
 export default function SwimmerProfileForm() {
   // --- STATE MANAGEMENT ---
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
@@ -39,8 +51,9 @@ export default function SwimmerProfileForm() {
   const [vitals, setVitals] = useState({
     age: "",
     height: "",
-    weight: "",
   });
+
+  const [skillLevel, setSkillLevel] = useState<string>("");
 
   const [kpis, setKpis] = useState({
     backsquat: "",
@@ -88,6 +101,10 @@ export default function SwimmerProfileForm() {
       delete updatedTimes[eventToDelete];
       return updatedTimes;
     });
+  };
+
+  const handleSkillLevelChange = (event: SelectChangeEvent) => {
+    setSkillLevel(event.target.value);
   };
 
   // Handle Input Changes for generic objects
@@ -158,7 +175,22 @@ export default function SwimmerProfileForm() {
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                 <TextField label="Age" name="age" type="number" slotProps={{ input: { inputProps: {min: 0}, endAdornment: <InputAdornment position="end"></InputAdornment>}}} value={vitals.age} onChange={handleVitalChange} fullWidth />
                 <TextField label="Height" name="height" placeholder="e.g. 6'2&quot;" value={vitals.height} onChange={handleVitalChange} fullWidth />
-                <TextField label="Weight" name="weight" type="number" slotProps={{ input: { endAdornment: <InputAdornment position="end">lbs</InputAdornment> } }} value={vitals.weight} onChange={handleVitalChange} fullWidth />
+                <FormControl fullWidth>
+                  <InputLabel id="skill-level-label">Skill Level</InputLabel>
+                  <Select
+                    labelId="skill-level-label"
+                    name="skillLevel" // Matches your state key
+                    value={skillLevel || ''} 
+                    label="Skill Level"
+                    onChange={handleSkillLevelChange}
+                  >
+                    {skillLevels.map((option: SkillOption) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Stack>
             </Box>
 

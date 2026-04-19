@@ -1,8 +1,9 @@
 from langchain_core.messages import AnyMessage
-from typing import Annotated, Dict, TypedDict, List
-from proto import Enum
-from pydantic import BaseModel, Field, field_validator, model_validator, ValidationInfo
-import operator
+from typing import Dict, TypedDict, List
+from enum import Enum
+import warnings
+from pydantic import BaseModel, Field, model_validator, ValidationInfo, field_validator, computed_field
+from datetime import datetime, timedelta
 
 class PhaseType(str, Enum):
     GPP = "GPP"                 # General Physical Preparation
@@ -22,13 +23,6 @@ class SkillLevel(str, Enum):
     DEVELOPMENTAL = "Developmental"
     COMPETITIVE = "Competitive"
     ELITE = "Elite"
-    
-SKILL_VOLUME_MULTIPLIERS = {
-    SkillLevel.RECREATIONAL: 0.50,
-    SkillLevel.DEVELOPMENTAL: 0.70,
-    SkillLevel.COMPETITIVE: 0.90,
-    SkillLevel.ELITE: 1.00
-}
 
 def get_yard_progression_rate(skill_level: SkillLevel) -> float:
     return {
@@ -125,47 +119,76 @@ class Meet(BaseModel):
 
 class AthleteProfile(BaseModel):
     vitals: Vitals
+    skillLevel: SkillLevel
     kpis: StrengthKPIs
     swimData: SwimData
     meets: List[Meet]
     agentNotes: str
     
-
-class AgentState(TypedDict):
+class WorkoutSection(BaseModel):
+    name: str
+    section_yardage: int
+    description: str
     
-    # Messages from the user and agent's response
-    messages: Annotated[List[AnyMessage], operator.add]
+class DailyWorkout(BaseModel):
+    date: str
+    focus: FocusType
+    total_yardage: int
+    sections: List[WorkoutSection]
     
-    # 1 Athlete Profile
-    athlete_profile: dict
+    @field_validator("date")
+    @classmethod
+    def validate_date_format(cls, v: str) -> str:
+        try:
+            datetime.strptime(v, "%Y-%m-%d")
+        except ValueError:
+            raise ValueError("Date must be in YYYY-MM-DD format.")
+        return v
     
-    # 2 Macro/Meso/Micro Plan
-    macro_plan: dict            # Big picture plan for the entire training cycle
-    meso_plan: List[dict]       # More detailed plan for a specific training block (e.g., 4 weeks)
-    micro_plan: List[dict]      # Very detailed plan for a specific week
-    daily_workouts: List[dict]  # Workouts for each day of the week
+    @model_validator(mode="after")
+    def validate_total_yardage(self):
+        calculated_yardage = sum(section.section_yardage for section in self.sections)
+        if self.total_yardage != calculated_yardage:
+            raise ValueError(
+                f"Total yardage {self.total_yardage} does not match "
+                f"calculated yardage {calculated_yardage}."
+            )
+        return self
     
-    # 4. Routing & Validation Flags
-    # Helps the Orchestrator decide if it needs to loop back
-    is_profile_complete: bool
-    validation_errors: List[str]
-    current_phase: PhaseType
-    
-class MicroPlan(BaseModel):
+class MicroCycle(BaseModel):
     week_number: int
+    phase: PhaseType
     total_weekly_yardage: int = Field(gt=0, description="Total yardage for the week")
     focus: FocusType = Field(description="Focus of the week")
-    
-    @field_validator('total_weekly_yardage')
-    def validate_yardage(cls, v):
-        if v > 40000:
-            raise ValueError("Yardage exceeds reasonable limits for a week.")
+    daily_workouts: List[DailyWorkout]
+        
+class MicroCycleStub(BaseModel):
+    week_number: int
+    focus: FocusType
+    target_weekly_yardage: int
+    start_date: str  # The Monday of the week in YYYY-MM-DD
+
+    @field_validator("start_date")
+    @classmethod
+    def validate_date_format(cls, v: str) -> str:
+        try:
+            datetime.strptime(v, "%Y-%m-%d")
+        except ValueError:
+            raise ValueError("Date must be in YYYY-MM-DD format.")
         return v
 
+    # Add 7 days to the start date
+    @computed_field
+    @property
+    def end_date(self) -> str:
+        start_dt = datetime.strptime(self.start_date, "%Y-%m-%d")
+        end_dt = start_dt + timedelta(days=6) 
+        return end_dt.strftime("%Y-%m-%d")
+
 class MesoCycle(BaseModel):
-    phase: PhaseType
-    num_weeks: int = Field(
-        gt=0, 
+    num_weeks: int
+    micro_cycle_stubs: List[MicroCycleStub]
+    phase: PhaseType = Field(
         description="""
             GPP: General Physical Preparation (6-8 week build with peak effort starting around week 4-5). Focus
             on building aerobic base, general strength, and work capacity.  Volume is high with intensity 
@@ -194,34 +217,94 @@ class MesoCycle(BaseModel):
     def validate_yardage(self, info: ValidationInfo):
         ctx = info.context
         athlete_age = ctx.get("athlete_age")
+        skill_level = ctx.get("skill_level")
         last_week_yardage = ctx.get("last_week_yardage")
         
         age_ceiling = get_age_yardage_ceiling(athlete_age)
-        
         intensity_multi = get_intensity_volume_multiplier(self.focus)
         phase_multi = get_phase_volume_multiplier(self.phase)
-        
         adjusted_ceil = int(age_ceiling * intensity_multi * phase_multi)
-        
-        if self.target_weekly_yardage > adjusted_ceil:
-            raise ValueError(
-                f"Yardage {self.target_weekly_yardage:,} exceeds safe limit of "
-                f"{adjusted_ceil:,} for age {athlete_age}, "
-                f"phase={self.phase}, focus={self.focus}."
-            )
-        if self.target_weekly_yardage:
-            max_increase = int(get_yard_progression_rate(self.focus) * last_week_yardage)
-            
-            if self.target_weekly_yardage > last_week_yardage + max_increase:
+
+        prev_yardage = last_week_yardage
+
+        for stub in self.micro_cycle_stubs:
+            if stub.target_weekly_yardage > adjusted_ceil:
                 raise ValueError(
-                    f"Yardage {self.target_weekly_yardage:,} exceeds safe limit of "
-                    f"{last_week_yardage + max_increase:,} for age {athlete_age}, "
+                    f"Week {stub.week_number} yardage {stub.target_weekly_yardage:,} "
+                    f"exceeds safe limit of {adjusted_ceil:,} for age {athlete_age}, "
                     f"phase={self.phase}, focus={self.focus}."
                 )
-                
-        max_allowed = get_max_weight_room_sessions(self.phase, self.focus, self.focus, age_ceiling, last_week_yardage)
-        if self.weight_room_sessions_per_week > max_allowed:
+            
+            max_allowed = int(get_yard_progression_rate(skill_level) * prev_yardage)
+            if stub.target_weekly_yardage > max_allowed:
+                raise ValueError(
+                    f"Week {stub.week_number} yardage {stub.target_weekly_yardage:,} "
+                    f"exceeds safe progression limit of {max_allowed:,} "
+                    f"from previous week of {prev_yardage:,}."
+                )
+            prev_yardage = stub.target_weekly_yardage
+        return self
+    # Give a warning if the mesocycle is unusually long
+    @model_validator(mode="after")
+    def warn_unusual_duration(self):
+        PHASE_WEEK_RANGES = {
+            PhaseType.GPP:     (6, 8),
+            PhaseType.SPP:     (5, 6),
+            PhaseType.TAPER:   (1, 2),
+            PhaseType.DE_LOAD: (1, 1),
+        }
+        min_w, max_w = PHASE_WEEK_RANGES[self.phase]
+        if not (min_w <= self.num_weeks <= max_w):
+            warnings.warn(
+                f"{self.phase} duration of {self.num_weeks} weeks is outside "
+                f"the typical {min_w}-{max_w} week range."
+            )
+        return self
+    @model_validator(mode="after")
+    def validate_stub_count(self):
+        if len(self.micro_cycle_stubs) != self.num_weeks:
             raise ValueError(
-                f"Weight sessions ({self.weight_room_sessions_per_week}) exceed the "
-                f"maximum of {max_allowed} for {self.phase} phase at this yardage load."
-        )
+                f"Expected {self.num_weeks} micro cycle stubs, "
+                f"got {len(self.micro_cycle_stubs)}."
+            )
+        return self
+
+class MesoCycleStub(BaseModel):
+    phase: PhaseType
+    num_weeks: int
+    focus: FocusType
+    start_date: str        # "YYYY-MM-DD"
+        
+    # Validate date
+    @field_validator("start_date")
+    @classmethod
+    def validate_date_format(cls, v: str) -> str:
+        try:
+            datetime.strptime(v, "%Y-%m-%d")
+        except ValueError:
+            raise ValueError("Date must be in YYYY-MM-DD format.")
+        return v
+    
+    # Compute end date
+    @computed_field 
+    @property
+    def end_date(self) -> str:
+        start_dt = datetime.strptime(self.start_date, "%Y-%m-%d")
+        end_dt = start_dt + timedelta(weeks=self.num_weeks) - timedelta(days=1)
+        return end_dt.strftime("%Y-%m-%d")
+    
+class MacroCycle(BaseModel):
+    athlete_age: int
+    skill_level: SkillLevel
+    cycle_start_date: str
+    target_meet: Meet
+    mesocycles: List[MesoCycleStub]
+    
+class AgentState(TypedDict):
+    
+    athlete_profile: AthleteProfile
+    
+    macro_plan: MacroCycle            # Big picture plan for the entire training cycle
+    meso_plan: List[MesoCycle]        # More detailed plan for a specific training block (e.g., 4 weeks)
+    micro_plan: List[MicroCycle]      # Very detailed plan for a specific week
+    daily_workouts: List[DailyWorkout]        # Workouts for each day of the week

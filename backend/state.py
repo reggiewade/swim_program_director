@@ -2,6 +2,8 @@ from langchain_core.messages import AnyMessage
 from typing import Dict, TypedDict, List
 from enum import Enum
 import warnings
+from typing import Annotated, Literal
+from langgraph.graph.message import add_messages
 from pydantic import BaseModel, Field, model_validator, ValidationInfo, field_validator, computed_field
 from datetime import datetime, timedelta
 
@@ -304,7 +306,10 @@ class AgentState(TypedDict):
     
     athlete_profile: AthleteProfile
     
-    macro_plan: MacroCycle            # Big picture plan for the entire training cycle
-    meso_plan: List[MesoCycle]        # More detailed plan for a specific training block (e.g., 4 weeks)
-    micro_plan: List[MicroCycle]      # Very detailed plan for a specific week
-    daily_workouts: List[DailyWorkout]        # Workouts for each day of the week
+    macro_plan: MacroCycle                                  # Big picture plan for the entire training cycle
+    meso_plan: List[MesoCycle]                              # More detailed plan for a specific training block (e.g., 4 weeks)
+    micro_plan: List[MicroCycle]                            # Very detailed plan for a specific week
+    daily_workouts: List[DailyWorkout]                      # Workouts for each day of the week
+    messages: Annotated[list[AnyMessage], add_messages]     # List of messages
+    next_agent: str                                         # orchestrator writes this to route
+    current_phase: Literal["macro", "meso", "micro", "daily", "done"]

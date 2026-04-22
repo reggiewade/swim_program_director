@@ -5,7 +5,6 @@ jspm_packages/
 # Build outputs
 dist/
 build/
-lib/
 
 # Debug and Error logs
 npm-debug.log*

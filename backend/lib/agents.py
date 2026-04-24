@@ -63,16 +63,43 @@ def meso_agent(state: AgentState):
 
     for stub in macro_plan.mesocycles:
         reasoning_messages = [
-            SystemMessage(),
+            SystemMessage(prompts.MESO_REASONING_PROMPT),
             HumanMessage(f"""
                 Athlete profile: {profile}
                 Macro Plan: {macro_plan}
 
-                Please build a detailed mesocycle plan for this phase:
+                Please build a detailed mesocycle plan for this mesocycle stub:
                 Phase: {stub.phase}
                 Number of weeks: {stub.num_weeks}
                 Focus: {stub.focus}
                 Start Date: {stub.start_date}
                 End Date: {stub.end_date}
-                        """)
+            """
+            )
         ]
+    
+        meso_proposal = reasoning_llm.invoke(reasoning_messages)
+        
+        structured_messages = [
+            SystemMessage(prompts.MESO_SUMMARIZER_PROMPT),
+            HumanMessage(meso_proposal.content)
+        ]
+
+        MAX_RETRIES = 3
+        last_err = None
+        
+        for i in range(MAX_RETRIES):
+            try:
+                structured_plan = meso_fortmatter.invoke(structured_messages)
+                print(structured_plan)
+                if structured_plan:
+                    break
+            except Exception as e:
+                print(f"Exception on attempt {i + 1}: {type(e).__name__}: {e}")
+                last_err = str(e)
+                structured_messages.append(HumanMessage(f"Your response failed validation: {last_err}. Please fix it."))
+        if structured_plan is None:
+            return {"meso_plans": None, "error": f"meso_agent failed on phase: '{stub.phase}' after {MAX_RETRIES} attempts: {last_err}" }
+        meso_plans.append(structured_plan)
+
+    return {"meso_plans": meso_plans, "error": None}

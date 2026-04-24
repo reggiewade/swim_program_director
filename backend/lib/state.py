@@ -17,6 +17,7 @@ class FocusType(str, Enum):
     AEROBIC = "Aerobic"
     ANAEROBIC = "Anaerobic"
     TECHNIQUE = "Technique"
+    TAPER = "Taper"
     POWER = "Power"
     RECOVERY = "Recovery"
     
@@ -158,16 +159,12 @@ class DailyWorkout(BaseModel):
         return self
     
 class MicroCycle(BaseModel):
-    week_number: int
-    phase: PhaseType
-    total_weekly_yardage: int = Field(gt=0, description="Total yardage for the week")
-    focus: FocusType = Field(description="Focus of the week")
     daily_workouts: List[DailyWorkout]
         
 class MicroCycleStub(BaseModel):
-    week_number: int
     focus: FocusType
-    target_weekly_yardage: int
+    target_yardage: int
+    weight_room_sessions: int
     start_date: str  # The Monday of the week in YYYY-MM-DD
 
     @field_validator("start_date")
@@ -188,69 +185,7 @@ class MicroCycleStub(BaseModel):
         return end_dt.strftime("%Y-%m-%d")
 
 class MesoCycle(BaseModel):
-    num_weeks: int
     micro_cycle_stubs: List[MicroCycleStub]
-    phase: PhaseType
-    focus: FocusType
-    target_weekly_yardage: int = Field(gt=0, description="Target weekly yardage for the mesocycle")
-    weight_room_sessions_per_week: int = Field(ge=0, description="Number of weight room sessions per week")
-    
-    # Extensive safety checks to ensure safe training for all ages
-    @model_validator(mode="after")
-    def validate_yardage(self, info: ValidationInfo):
-        ctx = info.context
-        athlete_age = ctx.get("athlete_age")
-        skill_level = ctx.get("skill_level")
-        last_week_yardage = ctx.get("last_week_yardage")
-        
-        age_ceiling = get_age_yardage_ceiling(athlete_age)
-        intensity_multi = get_intensity_volume_multiplier(self.focus)
-        phase_multi = get_phase_volume_multiplier(self.phase)
-        adjusted_ceil = int(age_ceiling * intensity_multi * phase_multi)
-
-        prev_yardage = last_week_yardage
-
-        for stub in self.micro_cycle_stubs:
-            if stub.target_weekly_yardage > adjusted_ceil:
-                raise ValueError(
-                    f"Week {stub.week_number} yardage {stub.target_weekly_yardage:,} "
-                    f"exceeds safe limit of {adjusted_ceil:,} for age {athlete_age}, "
-                    f"phase={self.phase}, focus={self.focus}."
-                )
-            
-            max_allowed = int(get_yard_progression_rate(skill_level) * prev_yardage)
-            if stub.target_weekly_yardage > max_allowed:
-                raise ValueError(
-                    f"Week {stub.week_number} yardage {stub.target_weekly_yardage:,} "
-                    f"exceeds safe progression limit of {max_allowed:,} "
-                    f"from previous week of {prev_yardage:,}."
-                )
-            prev_yardage = stub.target_weekly_yardage
-        return self
-    # Give a warning if the mesocycle is unusually long
-    @model_validator(mode="after")
-    def warn_unusual_duration(self):
-        PHASE_WEEK_RANGES = {
-            PhaseType.GPP:     (6, 8),
-            PhaseType.SPP:     (5, 6),
-            PhaseType.TAPER:   (1, 2),
-            PhaseType.DE_LOAD: (1, 1),
-        }
-        min_w, max_w = PHASE_WEEK_RANGES[self.phase]
-        if not (min_w <= self.num_weeks <= max_w):
-            warnings.warn(
-                f"{self.phase} duration of {self.num_weeks} weeks is outside "
-                f"the typical {min_w}-{max_w} week range."
-            )
-        return self
-    @model_validator(mode="after")
-    def validate_stub_count(self):
-        if len(self.micro_cycle_stubs) != self.num_weeks:
-            raise ValueError(
-                f"Expected {self.num_weeks} micro cycle stubs, "
-                f"got {len(self.micro_cycle_stubs)}."
-            )
-        return self
 
 class MesoCycleStub(BaseModel):
     phase: PhaseType
@@ -267,7 +202,23 @@ class MesoCycleStub(BaseModel):
         except ValueError:
             raise ValueError("Date must be in YYYY-MM-DD format.")
         return v
-    
+        # Give a warning if the mesocycle is unusually long
+    @model_validator(mode="after")
+    def warn_unusual_duration(self):
+        PHASE_WEEK_RANGES = {
+            PhaseType.GPP:     (6, 8),
+            PhaseType.SPP:     (5, 6),
+            PhaseType.TAPER:   (1, 2),
+            PhaseType.DE_LOAD: (1, 1),
+        }
+        min_w, max_w = PHASE_WEEK_RANGES[self.phase]
+        if not (min_w <= self.num_weeks <= max_w):
+            warnings.warn(
+                f"{self.phase} duration of {self.num_weeks} weeks is outside "
+                f"the typical {min_w}-{max_w} week range."
+            )
+        return self
+
     # Compute end date
     @computed_field 
     @property

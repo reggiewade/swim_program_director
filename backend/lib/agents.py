@@ -163,3 +163,27 @@ def micro_agent(state: AgentState):
                 micro_plan.append(workout_stub)
 
     return {"micro_plan": micro_plan, "error": None}
+
+def orchestrator_agent(state: AgentState):
+    macro_result = macro_agent(state)
+    if macro_result.get("error"):
+        return {"error": macro_result["error"]}
+
+    state["macro_plan"] = macro_result["macro_plan"]
+
+    meso_result = meso_agent(state)
+    if meso_result.get("error"):
+        return {"error": meso_result["error"]}
+
+    state["meso_plan"] = meso_result["meso_plan"]
+
+    micro_result = micro_agent(state)
+    if micro_result.get("error"):
+        return {"error": micro_result["error"]}
+
+    return {
+        "macro_plan": state["macro_plan"],
+        "meso_plan": state["meso_plan"],
+        "micro_plan": micro_result["micro_plan"],
+        "error": None
+    }

@@ -1,0 +1,110 @@
+{
+  "phase": "General Preparation",
+  "focus": "Aerobic",
+  "stroke_focus": "IM",
+  "total_yardage": 3500,
+  "sections": [
+    {
+      "name": "Warm Up",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 300,
+          "interval": null,
+          "description": "Smooth"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 150,
+          "interval": null,
+          "description": "Kick"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 150,
+          "interval": null,
+          "description": "Pull"
+        }
+      ]
+    },
+    {
+      "name": "Technique Set",
+      "items": [
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 25,
+          "interval": "00:50",
+          "description": "6-Kick Hesitation (Every Switch Should Be a Breakout)"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 50,
+          "interval": "01:00",
+          "description": "Backstroke L3"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 25,
+          "interval": "00:50",
+          "description": "Underwater Strong"
+        }
+      ]
+    },
+    {
+      "name": "Main Set",
+      "items": [
+        {
+          "reps": 8,
+          "sets": 1,
+          "distance": 100,
+          "interval": "01:50",
+          "description": "Alternating Smooth Freestyle and IM"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 500,
+          "interval": "07:30",
+          "description": ""
+        },
+        {
+          "reps": 3,
+          "sets": 1,
+          "distance": 100,
+          "interval": "02:00",
+          "description": "Free 5 Underwater Off Walls"
+        }
+      ]
+    },
+    {
+      "name": "Post Set",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 0,
+          "interval": null,
+          "description": "Starts Into Breakout - Swimmer performs racing starts focusing on entry and breakout position. Drill emphasis on maintaining underwater momentum into first stroke cycle."
+        }
+      ]
+    },
+    {
+      "name": "Cool Down",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "Easy"
+        }
+      ]
+    }
+  ]
+}

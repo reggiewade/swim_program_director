@@ -1,0 +1,126 @@
+{
+  "phase": "Specific Preparation",
+  "focus": "Threshold",
+  "stroke_focus": "IM",
+  "total_yardage": 3800,
+  "sections": [
+    {
+      "name": "Warm Up",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "Free"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "IM Drill"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 100,
+          "interval": null,
+          "description": "Kick"
+        }
+      ]
+    },
+    {
+      "name": "Main Set",
+      "items": [
+        {
+          "reps": 3,
+          "sets": 1,
+          "distance": 300,
+          "interval": "04:30",
+          "description": ""
+        },
+        {
+          "reps": 7,
+          "sets": 1,
+          "distance": 100,
+          "interval": "02:00",
+          "description": ""
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 100,
+          "interval": null,
+          "description": "Fast"
+        },
+        {
+          "reps": 2,
+          "sets": 1,
+          "distance": 300,
+          "interval": "04:15",
+          "description": ""
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 100,
+          "interval": "02:00",
+          "description": ""
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 100,
+          "interval": null,
+          "description": "Fast"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 50,
+          "interval": null,
+          "description": "Easy"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "Choice"
+        }
+      ]
+    },
+    {
+      "name": "Main Set",
+      "items": [
+        {
+          "reps": 2,
+          "sets": 1,
+          "distance": 200,
+          "interval": "03:00",
+          "description": "IM"
+        },
+        {
+          "reps": 6,
+          "sets": 1,
+          "distance": 25,
+          "interval": "00:55",
+          "description": "Underwater (no breath)"
+        }
+      ]
+    },
+    {
+      "name": "Cool Down",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 100,
+          "interval": null,
+          "description": "Choice"
+        }
+      ]
+    }
+  ]
+}

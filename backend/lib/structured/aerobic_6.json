@@ -1,0 +1,110 @@
+{
+  "phase": "General Preparation",
+  "focus": "Aerobic",
+  "stroke_focus": "Freestyle",
+  "total_yardage": 3600,
+  "sections": [
+    {
+      "name": "Warm Up",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 300,
+          "interval": null,
+          "description": "Smooth"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 150,
+          "interval": null,
+          "description": "Kick"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 150,
+          "interval": null,
+          "description": "Pull"
+        }
+      ]
+    },
+    {
+      "name": "Technique Set",
+      "items": [
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 25,
+          "interval": "00:40",
+          "description": "Breaststroke 2 Kick 1 Pull"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 50,
+          "interval": "00:50",
+          "description": "Fist Freestyle"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 25,
+          "interval": "00:40",
+          "description": "Choice to the Feet"
+        }
+      ]
+    },
+    {
+      "name": "Main Set",
+      "items": [
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 100,
+          "interval": "01:45",
+          "description": "Free"
+        },
+        {
+          "reps": 3,
+          "sets": 1,
+          "distance": 200,
+          "interval": "03:30",
+          "description": "Free"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 400,
+          "interval": "04:30",
+          "description": "Free"
+        }
+      ]
+    },
+    {
+      "name": "Post Set",
+      "items": [
+        {
+          "reps": 3,
+          "sets": 1,
+          "distance": 25,
+          "interval": null,
+          "description": "Starts Into Breakout (2-3 Reps)"
+        }
+      ]
+    },
+    {
+      "name": "Cool Down",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "Easy"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+{
+  "phase": "Taper",
+  "focus": "Power",
+  "stroke_focus": "IM",
+  "total_yardage": 3200,
+  "sections": [
+    {
+      "name": "Warm Up",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 300,
+          "interval": null,
+          "description": "Smooth Alternating Free and Back by 50"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 150,
+          "interval": null,
+          "description": "Kick"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 150,
+          "interval": null,
+          "description": "Pull"
+        }
+      ]
+    },
+    {
+      "name": "Technique Set",
+      "items": [
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 75,
+          "interval": "01:30",
+          "description": "Choice Kick / Drill / Swim"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 25,
+          "interval": "00:40",
+          "description": "Breaststroke Kick on Back (Knees Stay Underwater)"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 50,
+          "interval": "00:50",
+          "description": "1 Fin 1 Paddle Free (Switch After Every 2 x 50)"
+        }
+      ]
+    },
+    {
+      "name": "Main Set",
+      "items": [
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 50,
+          "interval": "01:10",
+          "description": "Free - Odds: Smooth Build to 85%, Evens: Fast Breakout Smooth Rest"
+        },
+        {
+          "reps": 2,
+          "sets": 1,
+          "distance": 200,
+          "interval": "03:00",
+          "description": "IM"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 100,
+          "interval": null,
+          "description": "Choice Smooth"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 100,
+          "interval": "02:10",
+          "description": "Free 6 Underwater Each Wall with Fins"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 50,
+          "interval": null,
+          "description": "Choice Smooth"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 50,
+          "interval": null,
+          "description": "Choice from Start 90-100%"
+        }
+      ]
+    },
+    {
+      "name": "Cool Down",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "Easy"
+        }
+      ]
+    }
+  ]
+}

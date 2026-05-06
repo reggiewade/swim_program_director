@@ -1,0 +1,103 @@
+{
+  "phase": "General Preparation",
+  "focus": "Technique",
+  "stroke_focus": "IM",
+  "total_yardage": 2750,
+  "sections": [
+    {
+      "name": "Warm Up",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "Swim"
+        }
+      ]
+    },
+    {
+      "name": "Technique Set",
+      "items": [
+        {
+          "reps": 8,
+          "sets": 1,
+          "distance": 25,
+          "interval": "03:00",
+          "description": "IM - 25 Drill, 25 Swim"
+        },
+        {
+          "reps": 2,
+          "sets": 1,
+          "distance": 50,
+          "interval": "01:15",
+          "description": "Kick"
+        }
+      ]
+    },
+    {
+      "name": "Main Set",
+      "items": [
+        {
+          "reps": 2,
+          "sets": 2,
+          "distance": 125,
+          "interval": "02:15",
+          "description": "Pull"
+        },
+        {
+          "reps": 2,
+          "sets": 2,
+          "distance": 100,
+          "interval": "02:15",
+          "description": ""
+        },
+        {
+          "reps": 1,
+          "sets": 2,
+          "distance": 100,
+          "interval": "02:00",
+          "description": "Choice Build"
+        },
+        {
+          "reps": 2,
+          "sets": 2,
+          "distance": 75,
+          "interval": "02:00",
+          "description": "Kick"
+        },
+        {
+          "reps": 2,
+          "sets": 4,
+          "distance": 100,
+          "interval": "01:20",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "Post Set",
+      "items": [
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 50,
+          "interval": "00:50",
+          "description": "Fast Flag to Flag"
+        }
+      ]
+    },
+    {
+      "name": "Cool Down",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "Swim Choice"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "phase": "Taper",
+  "focus": "Power",
+  "stroke_focus": "IM",
+  "total_yardage": 1900,
+  "sections": [
+    {
+      "name": "Warm Up",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 300,
+          "interval": null,
+          "description": "Smooth"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 150,
+          "interval": null,
+          "description": "Kick"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 150,
+          "interval": null,
+          "description": "Pull"
+        }
+      ]
+    },
+    {
+      "name": "Technique Set",
+      "items": [
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 25,
+          "interval": "01:00",
+          "description": "Breaststroke Pulldowns"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 50,
+          "interval": "01:10",
+          "description": "Fist Freestyle"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 25,
+          "interval": "01:00",
+          "description": "Fingertip Drag"
+        }
+      ]
+    },
+    {
+      "name": "Main Set",
+      "items": [
+        {
+          "reps": 6,
+          "sets": 1,
+          "distance": 50,
+          "interval": "02:00",
+          "description": "IM Transitions (Out Fast / Slow Back) - Swimmer performs fast IM transition on the way out, easy swim back. Activates neuromuscular system for race-specific stroke transitions without accumulating fatigue."
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 150,
+          "interval": null,
+          "description": "Easy"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 50,
+          "interval": "02:00",
+          "description": "Build Smooth to 90%"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 150,
+          "interval": null,
+          "description": "Easy"
+        },
+        {
+          "reps": 6,
+          "sets": 1,
+          "distance": 25,
+          "interval": "02:00",
+          "description": "Choice All Out (Hold Good Technique)"
+        }
+      ]
+    },
+    {
+      "name": "Post Set",
+      "items": [
+        {
+          "reps": 3,
+          "sets": 1,
+          "distance": 0,
+          "interval": null,
+          "description": "Starts Into Breakout (2-3 Reps)"
+        }
+      ]
+    },
+    {
+      "name": "Cool Down",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "Easy"
+        }
+      ]
+    }
+  ]
+}

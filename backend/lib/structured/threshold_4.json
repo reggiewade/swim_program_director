@@ -1,0 +1,126 @@
+{
+  "phase": "Specific Preparation",
+  "focus": "Threshold",
+  "stroke_focus": "Butterfly",
+  "total_yardage": 3550,
+  "sections": [
+    {
+      "name": "Warm Up",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 300,
+          "interval": null,
+          "description": "Smooth"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 150,
+          "interval": null,
+          "description": "Kick"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 150,
+          "interval": null,
+          "description": "Pull"
+        }
+      ]
+    },
+    {
+      "name": "Technique Set",
+      "items": [
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 50,
+          "interval": null,
+          "description": "25 Biondi / 25 Fly with Fins"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 25,
+          "interval": null,
+          "description": "1/1/1 Fly"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 25,
+          "interval": null,
+          "description": "Free with Fly Kick"
+        }
+      ]
+    },
+    {
+      "name": "Main Set",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": "02:50",
+          "description": "Pull with Paddles"
+        },
+        {
+          "reps": 3,
+          "sets": 1,
+          "distance": 150,
+          "interval": "02:50",
+          "description": "Free - Rotate 50 Fast"
+        },
+        {
+          "reps": 3,
+          "sets": 1,
+          "distance": 50,
+          "interval": "00:50",
+          "description": "Kick"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "Free - Breath Every 2/4/6/8 by 50"
+        },
+        {
+          "reps": 3,
+          "sets": 1,
+          "distance": 150,
+          "interval": "02:20",
+          "description": "Free - Rotate 100 Fast"
+        },
+        {
+          "reps": 3,
+          "sets": 1,
+          "distance": 50,
+          "interval": "00:50",
+          "description": "Kick"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "Free Strong"
+        }
+      ]
+    },
+    {
+      "name": "Cool Down",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "Easy"
+        }
+      ]
+    }
+  ]
+}

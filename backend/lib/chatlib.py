@@ -141,8 +141,8 @@ class ChatModel:
         #print("Setting tokens")
         tokens = response.usage_metadata
         if tokens:
-            messages[-1].response_metadata['token_usage'] = { 'prompt_tokens': tokens.get('input_tokens') }
-        else:
+            #messages[-1].response_metadata['token_usage'] = { 'prompt_tokens': tokens.get('input_tokens') }
+        #else:
             meta = response.response_metadata
             tokens = meta.get('token_usage')
             if tokens:

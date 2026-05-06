@@ -1,0 +1,114 @@
+{
+  "phase": "Specific Preparation",
+  "focus": "Power",
+  "stroke_focus": "IM",
+  "total_yardage": 2900,
+  "sections": [
+    {
+      "name": "Warm Up",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "Swim"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 100,
+          "interval": null,
+          "description": "Kick"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 100,
+          "interval": null,
+          "description": "Pull"
+        }
+      ]
+    },
+    {
+      "name": "Main Set",
+      "items": [
+        {
+          "reps": 6,
+          "sets": 1,
+          "distance": 50,
+          "interval": "01:00",
+          "description": "Free - build through the whole set (1st 50 slow, last 50 fast)"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 100,
+          "interval": "02:00",
+          "description": "Free broken (by 25) to the feet (10 seconds rest between the 25s)"
+        },
+        {
+          "reps": 12,
+          "sets": 1,
+          "distance": 25,
+          "interval": "00:40",
+          "description": "IMO - Odds easy, Evens fast"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 50,
+          "interval": "01:30",
+          "description": "Choice build through the whole set"
+        },
+        {
+          "reps": 2,
+          "sets": 1,
+          "distance": 100,
+          "interval": "02:00",
+          "description": "Free - broken (by 50) to the feet (20s rest between 50s)"
+        },
+        {
+          "reps": 8,
+          "sets": 1,
+          "distance": 25,
+          "interval": "00:45",
+          "description": "IMO - Odds easy, Evens fast"
+        },
+        {
+          "reps": 2,
+          "sets": 1,
+          "distance": 50,
+          "interval": "01:00",
+          "description": "Choice"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 100,
+          "interval": null,
+          "description": "Choice"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 50,
+          "interval": "02:00",
+          "description": "Race Pace IMO"
+        }
+      ]
+    },
+    {
+      "name": "Cool Down",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "easy"
+        }
+      ]
+    }
+  ]
+}

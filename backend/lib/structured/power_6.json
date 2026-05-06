@@ -1,0 +1,91 @@
+{
+  "phase": "Specific Preparation",
+  "focus": "Power",
+  "stroke_focus": "Freestyle",
+  "total_yardage": 3000,
+  "sections": [
+    {
+      "name": "Warm Up",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 300,
+          "interval": null,
+          "description": "Smooth"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 150,
+          "interval": null,
+          "description": "Kick"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 150,
+          "interval": null,
+          "description": "Pull"
+        }
+      ]
+    },
+    {
+      "name": "Technique Set",
+      "items": [
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 50,
+          "interval": null,
+          "description": "Fast in Flags"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 25,
+          "interval": null,
+          "description": "1 Fin 1 Paddle (Switch After Every 2 x 25)"
+        }
+      ]
+    },
+    {
+      "name": "Main Set",
+      "items": [
+        {
+          "reps": 15,
+          "sets": 1,
+          "distance": 25,
+          "interval": "01:00",
+          "description": "Stroke with Parachute (25 Easy to Return) - Resisted swimming with parachute develops power and stroke force. High rest-to-work ratio allows maximum effort on every rep."
+        },
+        {
+          "reps": 15,
+          "sets": 1,
+          "distance": 25,
+          "interval": "01:00",
+          "description": "with Fins (25 Easy to Return) - Overspeed training with fins allows swimmer to exceed normal race pace, training neuromuscular system to fire at higher stroke rates."
+        },
+        {
+          "reps": 15,
+          "sets": 1,
+          "distance": 25,
+          "interval": "01:00",
+          "description": "Dive to Feet (25 Easy to Return) - Racing start to wall touch. Emphasizes explosive start mechanics and underwater dolphin kick development."
+        }
+      ]
+    },
+    {
+      "name": "Cool Down",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "Easy"
+        }
+      ]
+    }
+  ]
+}

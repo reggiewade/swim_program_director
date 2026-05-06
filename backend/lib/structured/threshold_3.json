@@ -1,0 +1,119 @@
+{
+  "phase": "Specific Preparation",
+  "focus": "Threshold",
+  "stroke_focus": "Breaststroke",
+  "total_yardage": 3100,
+  "sections": [
+    {
+      "name": "Warm Up",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 300,
+          "interval": null,
+          "description": "Smooth"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 150,
+          "interval": null,
+          "description": "Kick"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 150,
+          "interval": null,
+          "description": "Pull"
+        }
+      ]
+    },
+    {
+      "name": "Technique Set",
+      "items": [
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 50,
+          "interval": "01:10",
+          "description": "Breast - 2 kicks 1 pull"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 50,
+          "interval": "01:00",
+          "description": "Breast - with dolphin kick"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 50,
+          "interval": "01:10",
+          "description": "Breast - kick on back"
+        }
+      ]
+    },
+    {
+      "name": "Main Set",
+      "items": [
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 75,
+          "interval": "01:30",
+          "description": "Kick/Drill/Swim breast"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 100,
+          "interval": "02:10",
+          "description": "Broken by 25 (10s rest) odds free evens breast - focus pullouts"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "free easy"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 100,
+          "interval": "02:10",
+          "description": "Broken by 25 (10s rest) odds free evens breast - focus pullouts"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "Free easy"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 50,
+          "interval": "03:00",
+          "description": "Breast from a dive"
+        }
+      ]
+    },
+    {
+      "name": "Cool Down",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "easy"
+        }
+      ]
+    }
+  ]
+}

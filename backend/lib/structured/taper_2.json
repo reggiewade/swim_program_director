@@ -1,0 +1,112 @@
+{
+  "phase": "Taper",
+  "focus": "Power",
+  "stroke_focus": "Freestyle",
+  "total_yardage": 2800,
+  "sections": [
+    {
+      "name": "Warm Up",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 300,
+          "interval": null,
+          "description": "Smooth Alternating Free and Back by 50"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 150,
+          "interval": null,
+          "description": "Kick"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 150,
+          "interval": null,
+          "description": "Pull"
+        }
+      ]
+    },
+    {
+      "name": "Technique Set",
+      "items": [
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 75,
+          "interval": "01:30",
+          "description": "Build"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 50,
+          "interval": "01:00",
+          "description": "Pull with Paddles"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 25,
+          "interval": null,
+          "description": "6-Kick Hesitation"
+        }
+      ]
+    },
+    {
+      "name": "Main Set",
+      "items": [
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 100,
+          "interval": "03:00",
+          "description": "Broken by 50 - 20 Seconds Rest Between 50s - Fast"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "Easy"
+        },
+        {
+          "reps": 6,
+          "sets": 1,
+          "distance": 50,
+          "interval": "02:00",
+          "description": "Broken by 25 - 10 Seconds Rest Between 25s - Fast"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "Easy"
+        },
+        {
+          "reps": 6,
+          "sets": 1,
+          "distance": 25,
+          "interval": "01:00",
+          "description": "All Out"
+        }
+      ]
+    },
+    {
+      "name": "Cool Down",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "Easy"
+        }
+      ]
+    }
+  ]
+}

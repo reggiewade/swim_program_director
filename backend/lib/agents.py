@@ -5,15 +5,16 @@ import lib.state as state
 import lib.prompts as prompts
 from lib.state import AgentState
 import lib.chatlib as chatlib
+from lib.rag import retrieve_workouts
 
 # Load environment variables from .env file
 load_dotenv()
 
 # Load LLMs
-reasoning_llm = chatlib.get_chat_model("BSU_").llm
-macro_formatter = chatlib.get_chat_model("API_").llm.with_structured_output(state.MacroCycle)
+reasoning_llm = chatlib.get_chat_model("BSU_").llm      # claude
+macro_formatter = chatlib.get_chat_model("API_").llm.with_structured_output(state.MacroCycle)       # gemma4
 meso_fortmatter = chatlib.get_chat_model("API_").llm.with_structured_output(state.MesoCycle)
-#micro_llm = chatlib.get_chat_model("BSU_").llm.with_structured_output(state.MicroCycle, method="json_mode")
+micro_llm = chatlib.get_chat_model("API_").llm.with_structured_output(state.WorkoutStub)
 
 def macro_agent(state: AgentState) -> dict:
 
@@ -55,13 +56,15 @@ def macro_agent(state: AgentState) -> dict:
     print(f"All retries exhausted. Last error: {last_err}")
     return {"macro_plan": None, "error" : f"macro_agent failed after {MAX_RETRIES} attempts: {last_err}"}
 
+# plans the microcycle stubs that make up a mesocycle.
 def meso_agent(state: AgentState):
     profile = state["athlete_profile"]
     macro_plan = state["macro_plan"]
 
-    meso_plans = []
+    meso_plan = []
 
-    for stub in macro_plan.mesocycles:
+    # Build microcycle stubs
+    for stub in macro_plan.mesocycle_stubs:
         reasoning_messages = [
             SystemMessage(prompts.MESO_REASONING_PROMPT),
             HumanMessage(f"""
@@ -82,7 +85,12 @@ def meso_agent(state: AgentState):
         
         structured_messages = [
             SystemMessage(prompts.MESO_SUMMARIZER_PROMPT),
-            HumanMessage(meso_proposal.content)
+                HumanMessage(f"""
+                    Convert this plan to structured output.
+                    There MUST be exactly {stub.num_weeks} microcycle stubs — one per week.
+                    
+                    {meso_proposal.content}
+                """)
         ]
 
         MAX_RETRIES = 3
@@ -91,7 +99,6 @@ def meso_agent(state: AgentState):
         for i in range(MAX_RETRIES):
             try:
                 structured_plan = meso_fortmatter.invoke(structured_messages)
-                print(structured_plan)
                 if structured_plan:
                     break
             except Exception as e:
@@ -100,6 +107,59 @@ def meso_agent(state: AgentState):
                 structured_messages.append(HumanMessage(f"Your response failed validation: {last_err}. Please fix it."))
         if structured_plan is None:
             return {"meso_plans": None, "error": f"meso_agent failed on phase: '{stub.phase}' after {MAX_RETRIES} attempts: {last_err}" }
-        meso_plans.append(structured_plan)
+        meso_plan.append(structured_plan)
 
-    return {"meso_plans": meso_plans, "error": None}
+    return {"meso_plan": meso_plan, "error": None}
+
+
+def micro_agent(state: AgentState):
+    profile = state['athlete_profile']
+    meso_cycles = state['meso_plan']
+
+    micro_plan = []
+    
+    for meso in meso_cycles:
+        for stub in meso.micro_cycle_stubs:
+            week_stubs = []
+
+            for i in range(stub.num_swims):
+                messages = [
+                    SystemMessage(prompts.MICRO_PROMPT),
+                    HumanMessage(f"""
+                        Strokes to target: {profile.swimData.events}
+                        Weekly focus: {stub.focus}
+
+
+                        You are generating workout stub {i + 1} of {stub.num_swims} for this week.
+                        Already planned this week: {week_stubs}
+
+                        Target around (this is not a hard limit): {stub.target_yardage // stub.num_swims} 
+                        yards for this workout. Keep in mind this is a workout for just a single day, not the entire week.
+                    """)
+                ]
+
+                MAX_RETRIES = 3
+                last_err = None
+                workout_stub = None
+
+                for attempt in range(MAX_RETRIES):
+                    try:
+                        workout_stub = micro_llm.invoke(messages)
+                        if workout_stub:
+                            break
+                    except Exception as e:
+                        print(f"Attempt {attempt + 1} failed: {type(e).__name__}: {e}")
+                        last_err = str(e)
+                        messages.append(
+                            HumanMessage(f"Your response failed validation: {last_err}. Please fix it.")
+                        )
+
+                if workout_stub is None:
+                    return {
+                        "micro_plans": None,
+                        "error": f"micro_agent failed on week '{stub.start_date}' swim {i + 1} after {MAX_RETRIES} attempts: {last_err}"
+                    }
+                week_stubs.append(workout_stub)
+                micro_plan.append(workout_stub)
+
+    return {"micro_plan": micro_plan, "error": None}

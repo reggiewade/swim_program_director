@@ -1,0 +1,115 @@
+{
+  "phase": "Specific Preparation",
+  "focus": "Power",
+  "stroke_focus": "Freestyle",
+  "total_yardage": 3200,
+  "sections": [
+    {
+      "name": "Warm Up",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 300,
+          "interval": null,
+          "description": "Smooth"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 150,
+          "interval": null,
+          "description": "Kick"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 150,
+          "interval": null,
+          "description": "Pull"
+        }
+      ]
+    },
+    {
+      "name": "Technique Set",
+      "items": [
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 50,
+          "interval": null,
+          "description": "2 Kick 1 Pull Breaststroke"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 25,
+          "interval": null,
+          "description": "Pullouts with Paddles"
+        }
+      ]
+    },
+    {
+      "name": "Main Set",
+      "items": [
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 100,
+          "interval": "03:00",
+          "description": "Broken by 50 - Odds Free / Evens Fly - 20 Seconds Rest Between 50s"
+        }
+      ]
+    },
+    {
+      "name": "Main Set",
+      "items": [
+        {
+          "reps": 3,
+          "sets": 1,
+          "distance": 0,
+          "interval": "01:30",
+          "description": "4 Cycles Resisted Cord - Swimmer attached to resistance cord performs 4 stroke cycles at maximum effort against resistance, developing power and stroke rate"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 25,
+          "interval": "01:00",
+          "description": "Assisted Cord"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 75,
+          "interval": null,
+          "description": "All Out from Dive"
+        }
+      ]
+    },
+    {
+      "name": "Main Set",
+      "items": [
+        {
+          "reps": 2,
+          "sets": 1,
+          "distance": 400,
+          "interval": null,
+          "description": "Easy (Active Recovery)"
+        }
+      ]
+    },
+    {
+      "name": "Cool Down",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "Easy"
+        }
+      ]
+    }
+  ]
+}

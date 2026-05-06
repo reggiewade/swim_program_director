@@ -1,10 +1,10 @@
 from langchain_core.messages import AnyMessage
-from typing import Dict, TypedDict, List
+from typing import Dict, TypedDict, List, Optional
 from enum import Enum
 import warnings
 from typing import Annotated, Literal
 from langgraph.graph.message import add_messages
-from pydantic import BaseModel, Field, model_validator, ValidationInfo, field_validator, computed_field
+from pydantic import BaseModel, model_validator, field_validator, computed_field
 from datetime import datetime, timedelta
 
 class PhaseType(str, Enum):
@@ -20,6 +20,14 @@ class FocusType(str, Enum):
     TAPER = "Taper"
     POWER = "Power"
     RECOVERY = "Recovery"
+    THRESHOLD = "Threshold"
+
+class StrokeFocus(str, Enum):
+    BUTTERFLY = "Butterfly"
+    FREESTYLE = "Freestyle"
+    BREASTSTROKE = "Breaststroke"
+    BACKSTROKE = "Backstroke"
+    IM = "IM"
     
 class SkillLevel(str, Enum):
     RECREATIONAL = "Recreational"
@@ -128,44 +136,50 @@ class AthleteProfile(BaseModel):
     meets: List[Meet]
     agentNotes: str
     
+class WorkoutItem(BaseModel):
+    reps: int
+    sets: int
+    distance: int
+    interval: Optional[str] = None
+    description: str
+
+    @computed_field
+    @property
+    def yardage(self) -> int:
+        return self.reps * self.sets * self.distance
+
 class WorkoutSection(BaseModel):
     name: str
-    section_yardage: int
-    description: str
-    
-class DailyWorkout(BaseModel):
-    date: str
+    items: list[WorkoutItem]
+
+    @computed_field
+    @property
+    def yardage(self) -> int:
+        return sum(item.yardage for item in self.items)
+
+class Workout(BaseModel):
+    phase: str
+    focus: str
+    stroke_focus: str
+    total_yardage: Optional[int] = None
+    sections: list[WorkoutSection]
+
+    def model_post_init(self, __context):
+        self.total_yardage = sum(section.yardage for section in self.sections)
+
+class WorkoutStub(BaseModel):
+    phase: PhaseType
     focus: FocusType
-    total_yardage: int
-    sections: List[WorkoutSection]
+    stroke_focus: StrokeFocus
+    target_yardage: int
     
-    @field_validator("date")
-    @classmethod
-    def validate_date_format(cls, v: str) -> str:
-        try:
-            datetime.strptime(v, "%Y-%m-%d")
-        except ValueError:
-            raise ValueError("Date must be in YYYY-MM-DD format.")
-        return v
-    
-    @model_validator(mode="after")
-    def validate_total_yardage(self):
-        calculated_yardage = sum(section.section_yardage for section in self.sections)
-        if self.total_yardage != calculated_yardage:
-            raise ValueError(
-                f"Total yardage {self.total_yardage} does not match "
-                f"calculated yardage {calculated_yardage}."
-            )
-        return self
-    
-class MicroCycle(BaseModel):
-    daily_workouts: List[DailyWorkout]
         
 class MicroCycleStub(BaseModel):
     focus: FocusType
     target_yardage: int
     weight_room_sessions: int
-    start_date: str  # The Monday of the week in YYYY-MM-DD
+    num_swims: int
+    start_date: str
 
     @field_validator("start_date")
     @classmethod
@@ -230,16 +244,16 @@ class MesoCycleStub(BaseModel):
 class MacroCycle(BaseModel):
     cycle_start_date: str
     target_meet: Meet
-    mesocycles: List[MesoCycleStub]
+    mesocycle_stubs: List[MesoCycleStub]
     
 class AgentState(TypedDict):
     
     athlete_profile: AthleteProfile
     
-    macro_plan: MacroCycle                                  # Big picture plan for the entire training cycle
+    macro_plan: MacroCycle                                      # Big picture plan for the entire training cycle
     meso_plan: List[MesoCycle]                              # More detailed plan for a specific training block (e.g., 4 weeks)
-    micro_plan: List[MicroCycle]                            # Very detailed plan for a specific week
-    daily_workouts: List[DailyWorkout]                      # Workouts for each day of the week
-    messages: Annotated[list[AnyMessage], add_messages]     # List of messages
-    next_agent: str                                         # orchestrator writes this to route
+    micro_plan: List[WorkoutStub]                            # Very detailed plan for a specific week
+    daily_workouts: List[Workout]                               # Workouts for each day of the week
+    messages: Annotated[list[AnyMessage], add_messages]         # List of messages
+    next_agent: str                                             # orchestrator writes this to route
     current_phase: Literal["macro", "meso", "micro", "daily", "done"]

@@ -1,0 +1,70 @@
+{
+  "phase": "Specific Preparation",
+  "focus": "Power",
+  "stroke_focus": "Freestyle",
+  "total_yardage": 2500,
+  "sections": [
+    {
+      "name": "Warm Up",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 400,
+          "interval": null,
+          "description": "Mix Strokes"
+        },
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 150,
+          "interval": null,
+          "description": "Kick"
+        }
+      ]
+    },
+    {
+      "name": "Pre Set",
+      "items": [
+        {
+          "reps": 3,
+          "sets": 1,
+          "distance": 100,
+          "interval": "01:30",
+          "description": "No Breath Into or Out of Turn"
+        },
+        {
+          "reps": 4,
+          "sets": 1,
+          "distance": 50,
+          "interval": null,
+          "description": "Dolphin Kick on Back"
+        }
+      ]
+    },
+    {
+      "name": "Main Set",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 1750,
+          "interval": null,
+          "description": "Beat the Clock - Start on top of clock, kick 50 yards, must return before 59, 58, 57... but always leave at top. When can't make interval, start swimming. When can't make it swimming, add fins. Set ends when can't make interval with fins."
+        }
+      ]
+    },
+    {
+      "name": "Cool Down",
+      "items": [
+        {
+          "reps": 1,
+          "sets": 1,
+          "distance": 200,
+          "interval": null,
+          "description": "Free Smooth"
+        }
+      ]
+    }
+  ]
+}

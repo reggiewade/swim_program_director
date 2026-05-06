@@ -31,6 +31,8 @@ Definitions:
     POWER: Explosive strength, SP2-SP3 zones, very short distance (15-25m) with full recovery.
     TECHNIQUE: Stroke mechanics, starts, turns, drills, and neuromuscular efficiency.
     RECOVERY: Active recovery to flush lactate and restore CNS
+    THRESHOLD: Training near the swimmer's lactate threshold - where your body is producing lactic acid
+    at the same rate it can clear it
 """
 MACRO_SUMMARIZER_PROMPT = """
 Extract the most important information from the text provided and return 
@@ -44,7 +46,7 @@ You MUST return a valid JSON object with the following structure:
         {
             "phase": "GPP" | "SPP" | "TAPER" | "DE_LOAD",
             "num_weeks": int,
-            "focus": "Aerobic" | "Anaerobic" | "Technique" | "Power" | "Recovery",
+            "focus": "Aerobic" | "Anaerobic" | "Technique" | "Power" | "Recovery" | "Threshold",
             "start_date": "YYYY-MM-DD"
         }
     ]
@@ -64,10 +66,10 @@ Athlete Level Yardage & Session Guidelines:
 The athlete's level is provided in their profile. Use it to select the 
 correct yardage band above, then apply these phase multipliers to that band:
 
-  GPP:     Week 1-2: 65-70\% of max | Week 3-4: 80-90% | Week 5-6: 95-100%
-  SPP:     Week 1-2: 80-85\% of max | Week 3-4: 90-95% | Week 5-6: 85-90%
-  TAPER:   Week 1:   50-60\% of max | Week 2: 40-50%
-  DE_LOAD: All weeks: 50-55\% of max
+  GPP:     Week 1-2: 65-70% of max | Week 3-4: 80-90% | Week 5-6: 95-100%
+  SPP:     Week 1-2: 80-85% of max | Week 3-4: 90-95% | Week 5-6: 85-90%
+  TAPER:   Week 1:   50-60% of max | Week 2: 40-50%
+  DE_LOAD: All weeks: 50-55% of max
 
 Always produce a distinct, increasing or phase-appropriate target_yardage 
 per microcycle. Never flatten weeks to the same value.
@@ -81,10 +83,28 @@ You MUST return a valid JSON object with the following structure:
 {
     "micro_cycle_stubs": [
         {
-            "focus": "Aerobic" | "Anaerobic" | "Technique" | "Taper" |"Power" | "Recovery",
+            "focus": "Aerobic" | "Anaerobic" | "Technique" | "Taper" |"Power" | "Recovery" | "Threshold",
             "target_yardage": int,
             "weight_room_sessions": int,
+            "num_swims": int,
             "start_date": "YYYY-MM-DD"
+        }
+    ]
+}
+"""
+
+MICRO_PROMPT = """
+Extract the most important information from the text provided and return 
+them in the requested JSON structure.
+
+You MUST return a valid JSON object with the following structure:
+{
+    "workout_stub": [
+        {
+            phase: "GPP" | "SPP" | "TAPER" | "DE_LOAD",
+            focus: "Aerobic" | "Anaerobic" | "Technique" | "Taper" |"Power" | "Recovery" | "Threshold",
+            stroke_focus: "Butterfly" | "Freestyle" | "Breaststroke" | "Backstroke" | "IM",
+            target_yardage: int,
         }
     ]
 }

@@ -53,9 +53,9 @@ if result["error"]:
     sys.exit(1)
 
 # ── Print results ──────────────────────────────────────────────────────────────
-print(f"\nGenerated {len(result['meso_plans'])} mesocycle(s)\n")
+print(f"\nGenerated {len(result['meso_plan'])} mesocycle(s)\n")
 
-for i, meso in enumerate(result["meso_plans"]):
+for i, meso in enumerate(result["meso_plan"]):
     print(f"Mesocycle {i + 1}:")
     print(f"  Micro Cycle Stubs: {len(meso.micro_cycle_stubs)}")
     for j, stub in enumerate(meso.micro_cycle_stubs):
@@ -68,7 +68,7 @@ for i, meso in enumerate(result["meso_plans"]):
         print(f"    End Date:        {stub.end_date}")
 
 # ── Run Micro Agent ────────────────────────────────────────────────────────────
-fake_state["meso_plan"] = result["meso_plans"]
+fake_state["meso_plan"] = result["meso_plan"]
 
 print("\n--- Running Micro Agent ---")
 micro_result = micro_agent(fake_state)
@@ -77,9 +77,9 @@ if micro_result["error"]:
     print(f"{micro_result['error']}")
     sys.exit(1)
 
-print(f"\nGenerated {len(micro_result['micro_plans'])} workout stubs\n")
+print(f"\nGenerated {len(micro_result['micro_plan'])} workout stubs\n")
 
 i = 1
-for stub in micro_result["micro_plans"]:
+for stub in micro_result["micro_plan"]:
     print(f"  Day {i}: {stub.focus} | {stub.stroke_focus} | {stub.target_yardage}y")
     i+=1

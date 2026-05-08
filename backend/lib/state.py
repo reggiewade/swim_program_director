@@ -2,7 +2,7 @@ from typing import Dict, TypedDict, List, Optional
 from enum import Enum
 import warnings
 from typing import Literal
-from pydantic import BaseModel, model_validator, field_validator, computed_field
+from pydantic import BaseModel, Field, model_validator, field_validator, computed_field
 from datetime import datetime, timedelta
 
 class PhaseType(str, Enum):
@@ -180,7 +180,7 @@ class MicroCycleStub(BaseModel):
     focus: FocusType
     target_yardage: int
     weight_room_sessions: int
-    num_swims: int
+    num_swims: int = Field(description="Number of swim sessions this week, must be a positive integer")
     start_date: str
 
     @field_validator("start_date")

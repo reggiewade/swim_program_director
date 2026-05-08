@@ -43,7 +43,7 @@ def macro_agent(state: AgentState) -> dict:
         try:
             structured_plan = macro_formatter.invoke(structured_messages)
             if structured_plan:
-                print(structured_plan)
+                print(f"""Generated MacroCycle: {structured_plan}\n\n""")
                 return {"macro_plan": structured_plan, "error": None}
 
         except Exception as e:
@@ -88,8 +88,6 @@ def meso_agent(state: AgentState):
                 HumanMessage(f"""
                     Convert this plan to structured output.
                     There MUST be exactly {stub.num_weeks} microcycle stubs — one per week.
-                    MAXIMUM Yardage (per week): {yardage_ceiling} (based on age, phase and focus)
-                    You can adjust the weekly yardage as needed, but it should not exceed the ceiling.
 
                     {meso_proposal.content}
                 """)
@@ -102,7 +100,7 @@ def meso_agent(state: AgentState):
             try:
                 structured_plan = meso_fortmatter.invoke(structured_messages)
                 if structured_plan:
-                    print(structured_plan)
+                    print(f"""Generated MesoCycle for phase {stub.phase}: {structured_plan}\n\n""")
                     break
             except Exception as e:
                 print(f"Exception on attempt {i + 1}: {type(e).__name__}: {e}")
@@ -134,7 +132,8 @@ def micro_agent(state: AgentState):
 
 
                         You are generating workout stub {i + 1} of {stub.num_swims} for this week.
-                        Already planned this week: {week_stubs}
+                        Already planned this week: {week_stubs} PLEASE think about possible variations in 
+                        strokes week to week to ensure variety.
 
                         Target around (this is not a hard limit): {stub.target_yardage // stub.num_swims} 
                         yards for this workout. Keep in mind this is a workout for just a single day, not the entire week.
@@ -148,6 +147,7 @@ def micro_agent(state: AgentState):
                 for attempt in range(MAX_RETRIES):
                     try:
                         workout_stub = micro_llm.invoke(messages)
+                        print(f"""Generated WorkoutStub for week starting {stub.start_date}, swim {i + 1}: {workout_stub}\n\n""")
                         if workout_stub:
                             break
                     except Exception as e:

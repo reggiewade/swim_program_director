@@ -20,7 +20,7 @@ SEQUENCING RULES
 1. Plan BACKWARDS from target_meet.date
 2. Final mesocycle MUST end on target_meet.date
 3. Allowed phase order:
-   GPP → (optional DE_LOAD) → SPP → TAPER
+   GPP → (optional De Load) → SPP → Taper
 4. No gaps, no overlaps
 5. Each mesocycle start_date must align exactly:
    start_date[n+1] = start_date[n] + (num_weeks[n] * 7 days)
@@ -91,7 +91,7 @@ OUTPUT SCHEMA
   },
   "mesocycle_stubs": [
     {
-      "phase": "GPP" | "SPP" | "TAPER" | "DE_LOAD",
+      "phase": "GPP" | "SPP" | "Taper" | "De Load",
       "num_weeks": integer,
       "focus": "Aerobic" | "Anaerobic" | "Technique" | "Power" | "Recovery" | "Threshold",
       "start_date": "YYYY-MM-DD"
@@ -126,11 +126,11 @@ SPP:
   Week 3–4: 90–95%
   Week 5–6: 85–90% (slight drop for consolidation)
 
-TAPER:
+Taper:
   Week 1: 50–60%
   Week 2: 40–50%
 
-DE_LOAD:
+De Load:
   All weeks: 50–55%
 
 -----------------------
@@ -198,7 +198,7 @@ RULES:
 OUTPUT SCHEMA
 -----------------------
 {
-  "phase": "GPP" | "SPP" | "TAPER" | "DE_LOAD",
+  "phase": "GPP" | "SPP" | "Taper" | "De Load",
   "focus": "Aerobic" | "Anaerobic" | "Technique" | "Power" | "Recovery" | "Threshold" | "Taper",
   "stroke_focus": "Butterfly" | "Freestyle" | "Breaststroke" | "Backstroke" | "IM",
   "target_yardage": integer

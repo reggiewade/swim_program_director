@@ -22,7 +22,6 @@ import {
 import CancelIcon from "@mui/icons-material/Cancel";
 import SendIcon from "@mui/icons-material/Send";
 
-// Data Structure for our Event Groups
 const eventGroups = [
   { label: "Freestyle", items: ["50 Free", "100 Free", "200 Free", "500 Free"] },
   { label: "Backstroke", items: ["50 Back", "100 Back", "200 Back"] },

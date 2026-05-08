@@ -18,7 +18,18 @@ workout_llm = chatlib.get_chat_model("API_").llm.with_structured_output(state.Wo
 
 
 def macro_agent(state: AgentState) -> dict:
+    """Creates a macrocycle plan based on the athlete's profile.
 
+    This function uses an LLM to generate a macrocycle proposal and 
+    then calls another (smaller) LLM to convert that proposal into a 
+    structured MacroCycle object which will be passed downstream to the meso agent.
+
+    Args:
+        state (AgentState): The current state of the agent, including the athlete's profile.
+
+    Returns:
+        dict: A dictionary containing either the generated macro_plan or an error message.
+    """
     profile = state["athlete_profile"]
 
     reasoning_messages = [
@@ -54,7 +65,21 @@ def macro_agent(state: AgentState) -> dict:
     print(f"All retries exhausted. Last error: {last_err}")
     return {"macro_plan": None, "error" : f"macro_agent failed after {MAX_RETRIES} attempts: {last_err}"}
 
-def meso_agent(state: AgentState):
+def meso_agent(state: AgentState) -> dict:
+    """Generates mesocycle plans based on the macrocycle and athlete profile.
+
+    This function iterates through each mesocycle stub defined in the macrocycle
+    plan and creates a detailed mesocycle plan for each stub.  It uses the same
+    LLM flow as the macro agent to create a proposal, then convert to structured output
+    which is then passed downstream to the micro agent.
+
+    Args:
+        state (AgentState): The current state of the agent, including the athlete's profile and macro plan.
+
+    Returns:
+        dict: A dictionary containing either the generated meso_plan or an error message.
+    """
+    
     profile = state["athlete_profile"]
     macro_plan = state["macro_plan"]
 
@@ -113,7 +138,20 @@ def meso_agent(state: AgentState):
     return {"meso_plan": meso_plan, "error": None}
 
 
-def micro_agent(state: AgentState):
+def micro_agent(state: AgentState) -> dict:
+    """Generates microcycle (workout) plans based on the mesocycle and athlete profile.
+
+    This function loops through each microcycle stub defined in the mesocycle plan and
+    creates a workout stub for each swim in that week.  Since there are so many workout
+    stubs to generate, this function does not use a separate proposal + structured output
+    flow.  Instead, it uses a single prompt to generate each workout stub.
+
+    Args:
+        state (AgentState): The current state of the agent, including the athlete's profile and mesocycle plan.
+
+    Returns:
+        dict: A dictionary containing either the generated micro_plan or an error message.
+    """
     profile = state['athlete_profile']
     meso_cycles = state['meso_plan']
 
@@ -168,6 +206,21 @@ def micro_agent(state: AgentState):
     return {"micro_plan": micro_plan, "error": None}
 
 def workout_generator_agent(workout_stub: state.WorkoutStub) -> Workout:
+    """Generates a detailed workout based on the workout stub provided.
+
+    This agent takes a workout stub which contains the high level target yardage,
+    focus, phase and stroke information and uses RAG (retrieval augmented generation) to
+    pull similar workouts from the vector database.  It then provides those retrieved
+    workouts as in-context examples to the LLM along with feedback on whether
+    the previously generated workout was above or below the target yardage.  This 
+    process is repeated up to MAX_RETRIES times or until the generated workout is within 5% of the target yardage.
+
+    Args:
+        workout_stub (state.WorkoutStub): A stub containing the high level details for the workout to be generated.
+
+    Returns:
+        Workout: A detailed workout plan matching the structure defined in the Workout class.
+    """
     MAX_RETRIES = 3
     rag_query = (
         f"{workout_stub.focus.value} "
@@ -224,6 +277,18 @@ def workout_generator_agent(workout_stub: state.WorkoutStub) -> Workout:
         return None
 
 def orchestrator_agent(state: AgentState):
+    """Orchestrates the entire planning process from macrocycle down to microcycle.
+
+    This function serves as the main orchestrator that calls the macro_agent, meso_agent
+    and micro_agent in sequence.  It checks for errors at each step and if any agent fails,
+    will return an error message immediately without proceeding to the next steps.
+
+    Args:
+        state (AgentState): The current state of the agent, including the athlete's profile and macro plan.
+
+    Returns:
+        dict: A dictionary containing either the generated meso_plan, macro_plan, micro_plan or an error message.
+    """
     macro_result = macro_agent(state)
     if macro_result.get("error"):
         return {"error": macro_result["error"]}

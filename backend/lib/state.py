@@ -63,7 +63,21 @@ def get_phase_volume_multiplier(phase: PhaseType) -> float:
     }.get(phase, 1.0)
 
 def get_yardage_ceiling(age: int, focus: FocusType, phase: PhaseType) -> int:
-    """Gets the adjusted yardage ceiling based on age, focus, and phase for each microcycle (weeks)"""
+    """Calculates the maximum recommended weekly yardage
+
+    This function takes into account the swimmer's age, the
+    primary focus of the training phase and the current phase
+    of the macrocycle to determine what a safe yardage limit is
+    for a single week of training.
+
+    Args:
+        age (int): The swimmer's age.
+        focus (FocusType): The primary focus of the training phase.
+        phase (PhaseType): The current phase of the macrocycle.
+
+    Returns:
+        int: The maximum recommended weekly yardage.
+    """
     base_ceiling = get_age_yardage_ceiling(age)
     intensity_multiplier = get_intensity_volume_multiplier(focus)
     phase_multiplier = get_phase_volume_multiplier(phase)
@@ -110,6 +124,12 @@ def get_yardage_ceiling(age: int, focus: FocusType, phase: PhaseType) -> int:
         
     # return max(0, calculated)
     
+# These are the core data models that are used without the agentive system
+# to force the agents to conform to these structures.  This is helpful for
+# compressing the data passed between agents so that each and every agent
+# only has exactly what it needs and no more.  It also allows the program to
+# perform arithmetic and logic operations on the data to ensure the agents
+# are producing valid outputs.
 class Vitals(BaseModel):
     age: str
     height: str
@@ -256,5 +276,3 @@ class AgentState(TypedDict):
     meso_plan: List[MesoCycle]                                  # More detailed plan for a specific training block (e.g., 4 weeks)
     micro_plan: List[WorkoutStub]                               # Very detailed plan for a specific week
     daily_workouts: List[Workout]                               # Workouts for each day of the week
-    next_agent: str                                             # orchestrator writes this to route
-    current_phase: Literal["macro", "meso", "micro", "daily", "done"]

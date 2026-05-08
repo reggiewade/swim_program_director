@@ -6,6 +6,10 @@ from lib.state import AgentState, AthleteProfile, Vitals, SkillLevel, StrengthKP
 flask_app = Flask(__name__)
 CORS(flask_app)
 
+# Flask endpoint to recieve athlete data and run the agent.
+# The agent will process the data and generate a swim training plan
+# based on the athlete profile, vitals, KPIs and swim data provided in the request payload.
+
 @flask_app.route("/run", methods=["POST"])
 def run_agent():
     req = request.get_json()
@@ -34,8 +38,7 @@ def run_agent():
         macro_plan=None, meso_plan=[], micro_plan=[], daily_workouts=[],
     )
 
-    result = langgraph_app.invoke(state)
-    return jsonify(result)
+    langgraph_app.invoke(state)
 
 if __name__ == "__main__":
     flask_app.run(debug=True, port=8000)

@@ -20,6 +20,9 @@ this would not be cost effective at all.
 
 ### API Keys
 
+Look in .example.env for the format to populate API keys.  You will need keys for 
+two different models, it is recommended that the most powerful model be used for the
+reasoner and the weaker model for the formatter.
 
 ### Dependencies
 
@@ -39,8 +42,14 @@ npm init
 This will delete all the npm dependencies and initialize a fresh package.json
 
 ### Executing program
+Change directories to the backend lib folder and run ingest.py to populate the vector
+database.
+```bash
+cd backend/lib
+python3 ingest.py
+```
 
-Change directories to the backend folder and run the flask server
+Change directories back to the backend and run the server
 ```bash
 cd backend
 python3 server.py
@@ -63,3 +72,11 @@ As of right now there is no frontend to generate workouts, however you can gener
 workout_generator.py.  Unfortunately, you will need to edit the object manually as, again, there is
 no frontend to support the feature yet.  This workout agent will generate a set based on the constraints
 the use gives it and eventually will just grab the workoutstub when they are dumped into a database.
+
+
+### What was AI used for?
+I used AI in this project for some of the questions I had regarding design of the architecture and
+as a debugger for certain pydantic issues I was facing, as well as refactoring some of the reasoning
+prompts to make them more concise for the LLMs using them.  I also did have AI write a template for
+my frontend as I didn't have the time to design a nice web page UI (I probably should've stuck to 
+a terminal based program for the time being but oh well.)

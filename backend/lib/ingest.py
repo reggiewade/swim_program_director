@@ -19,6 +19,8 @@ text_splitter = RecursiveCharacterTextSplitter(separators="---WORKOUT---",
 
 documents = []
 
+# loop through all workout files and embed them into the vector store
+
 p = Path('./structured')
 for file in p.glob('*.json'):
     with file.open("r", encoding="utf-8") as f:

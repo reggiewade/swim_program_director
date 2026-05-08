@@ -1,6 +1,7 @@
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings
 
+# RAG retrieval function to get relevant workouts based on a query.
 def retrieve_workouts(query: str, k: int = 3):
     embed_model = OllamaEmbeddings(model="mxbai-embed-large")
     vector_store = Chroma(collection_name='workouts',

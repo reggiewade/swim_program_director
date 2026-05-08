@@ -11,7 +11,7 @@ from lib.agents import meso_agent, micro_agent
 
 load_dotenv()
 
-fake_state = AgentState(
+temp_state = AgentState(
     athlete_profile=AthleteProfile(
         vitals=Vitals(age="17", height="6'1"),
         skillLevel=SkillLevel.ELITE,
@@ -43,15 +43,15 @@ fake_state = AgentState(
     daily_workouts=[],
 )
 
-# ── Run agent ──────────────────────────────────────────────────────────────────
+# Run agent
 print("\n--- Running Meso Agent ---")
-result = meso_agent(fake_state)
+result = meso_agent(temp_state)
 
 if result["error"]:
     print(f"{result['error']}")
     sys.exit(1)
 
-# ── Print results ──────────────────────────────────────────────────────────────
+# Print results
 print(f"\nGenerated {len(result['meso_plan'])} mesocycle(s)\n")
 
 for i, meso in enumerate(result["meso_plan"]):
@@ -66,11 +66,11 @@ for i, meso in enumerate(result["meso_plan"]):
         print(f"    Start Date:      {stub.start_date}")
         print(f"    End Date:        {stub.end_date}")
 
-# ── Run Micro Agent ────────────────────────────────────────────────────────────
-fake_state["meso_plan"] = result["meso_plan"]
+# Run Micro Agent
+temp_state["meso_plan"] = result["meso_plan"]
 
 print("\n--- Running Micro Agent ---")
-micro_result = micro_agent(fake_state)
+micro_result = micro_agent(temp_state)
 
 if micro_result["error"]:
     print(f"{micro_result['error']}")

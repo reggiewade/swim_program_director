@@ -15,6 +15,20 @@ no explanation, and no markdown backticks. Nothing but raw JSON.
 llm = chatlib.get_chat_model("BSU_")    # claude 4.6 sonnet
 
 def convert_workout(raw_txt: str) -> dict:
+    """Converts a raw text swim workout into a structured JSON format.
+
+    Given a raw text version of the swim workout, this function uses a language model
+    to parse through the workout and extract structured information such as the phase,
+    focus, stroke focus, total yardage, and breakdown of sections and itmes.  These
+    details are crucial for generating accurate Workout objects later on via RAG.  The
+    function returns a dictionary that adheres to the specified workout schema in state.py.
+
+    Args:
+        raw_txt (str): The raw text version of the swim workout to be converted.
+
+    Returns:
+        dict: A dictionary containing either the generated meso_plan or an error message.
+    """
     messages = [
         SystemMessage(SYSTEM_PROMPT),
         HumanMessage(f"""
@@ -71,6 +85,7 @@ input_dir = 'swim_sets/'
 output_dir = 'structured/'
 os.makedirs(output_dir, exist_ok=True)
 
+# loop through all .txt files in input directory.
 for filename in os.listdir(input_dir):
     if filename.endswith('.txt'):
         input_path = os.path.join(input_dir, filename)

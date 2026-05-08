@@ -2,6 +2,9 @@ from langgraph.graph import StateGraph, END
 from lib.state import AgentState
 from lib.agents import orchestrator_agent
 
+# simple graph to run the orchestrator agent, which will
+# handle the process of handing off to the various agents
+# to create the structured plans.
 graph = StateGraph(AgentState)
 
 graph.add_node("orchestrator_agent", orchestrator_agent)

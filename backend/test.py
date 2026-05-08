@@ -41,7 +41,6 @@ fake_state = AgentState(
     meso_plan=[],
     micro_plan=[],
     daily_workouts=[],
-    error=None
 )
 
 # ── Run agent ──────────────────────────────────────────────────────────────────

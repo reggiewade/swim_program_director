@@ -37,10 +37,10 @@ interface SkillOption {
 }
 
 const skillLevels: SkillOption[] = [
-  { label: "Recreational", value: "recreational" },
-  { label: "Developmental", value: "developmental" },
-  { label: "Competitive", value: "competitive" },
-  { label: "Elite", value: "elite" }
+  { label: "Recreational", value: "Recreational" },
+  { label: "Developmental", value: "Developmental" },
+  { label: "Competitive", value: "Competitive" },
+  { label: "Elite", value: "Elite" }
 ];
 
 export default function SwimmerProfileForm() {
@@ -138,23 +138,32 @@ export default function SwimmerProfileForm() {
   };
 
   // Submit Handler
-  const handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     // Construct the payload for your Python backend
     const payload = {
       vitals,
+      skillLevel,
       kpis,
       swimData: {
         events: selectedEvents,
         times: eventTimes,
       },
+      meets,
       agentNotes,
     };
 
+    // sends the payload to the backend and logs the response (the generated plan)
     console.log("Submitting payload to backend:", payload);
-    alert("Check the console to see the JSON payload!");
-    // Example: axios.post('/api/submit-profile', payload)
+    const res = await fetch("http://localhost:8000/run", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const plan = await res.json();
+    console.log("Plan:", plan);
   };
 
   return (

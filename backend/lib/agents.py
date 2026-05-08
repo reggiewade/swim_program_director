@@ -3,34 +3,34 @@ from dotenv import load_dotenv
 from langchain_core.messages import SystemMessage, HumanMessage
 import lib.state as state
 import lib.prompts as prompts
-from lib.state import AgentState
+from lib.state import AgentState, Workout, get_yardage_ceiling
 import lib.chatlib as chatlib
 from lib.rag import retrieve_workouts
+from datetime import date
 
-# Load environment variables from .env file
 load_dotenv()
 
-# Load LLMs
 reasoning_llm = chatlib.get_chat_model("BSU_").llm      # claude
 macro_formatter = chatlib.get_chat_model("API_").llm.with_structured_output(state.MacroCycle)       # gemma4
 meso_fortmatter = chatlib.get_chat_model("API_").llm.with_structured_output(state.MesoCycle)
 micro_llm = chatlib.get_chat_model("API_").llm.with_structured_output(state.WorkoutStub)
+workout_llm = chatlib.get_chat_model("API_").llm.with_structured_output(state.Workout)
+
 
 def macro_agent(state: AgentState) -> dict:
 
-    # Grab athlete_profile from state
     profile = state["athlete_profile"]
 
-    # Inject reasoning prompt and profile into the llm prompt
     reasoning_messages = [
         SystemMessage(prompts.MACRO_REASONING_PROMPT),
         HumanMessage(f"""
             Please build a macro training cycle for this athlete:
             Athlete Profile: {profile}
+            The start date is: {date.today().isoformat()}
         """
         )
     ]
-    # Generate a plaintext macro proposal
+
     macro_proposal = reasoning_llm.invoke(reasoning_messages)
     structured_messages = [
         SystemMessage(prompts.MACRO_SUMMARIZER_PROMPT),
@@ -39,15 +39,13 @@ def macro_agent(state: AgentState) -> dict:
     MAX_RETRIES = 3
     last_err = None
 
-    # Try to abide by the Pydantic structure defined in state.py (3 attempts)
     for attempt in range(MAX_RETRIES):
         try:
-            # Take the unstructured plan and generate a plan based off of it
             structured_plan = macro_formatter.invoke(structured_messages)
             if structured_plan:
+                print(structured_plan)
                 return {"macro_plan": structured_plan, "error": None}
 
-        # Catch exception and append it to the structured message to give structure llm info on what to fix
         except Exception as e:
             print(f"Exception on attempt {attempt + 1}: {type(e).__name__}: {e}")
             last_err = str(e)
@@ -56,15 +54,15 @@ def macro_agent(state: AgentState) -> dict:
     print(f"All retries exhausted. Last error: {last_err}")
     return {"macro_plan": None, "error" : f"macro_agent failed after {MAX_RETRIES} attempts: {last_err}"}
 
-# plans the microcycle stubs that make up a mesocycle.
 def meso_agent(state: AgentState):
     profile = state["athlete_profile"]
     macro_plan = state["macro_plan"]
 
     meso_plan = []
 
-    # Build microcycle stubs
     for stub in macro_plan.mesocycle_stubs:
+        yardage_ceiling = get_yardage_ceiling(int(profile.vitals.age), stub.focus, stub.phase)
+
         reasoning_messages = [
             SystemMessage(prompts.MESO_REASONING_PROMPT),
             HumanMessage(f"""
@@ -75,6 +73,8 @@ def meso_agent(state: AgentState):
                 Phase: {stub.phase}
                 Number of weeks: {stub.num_weeks}
                 Focus: {stub.focus}
+                MAXIMUM Yardage (per week): {yardage_ceiling} (based on age, phase and focus)
+                You can adjust the weekly yardage as needed, but it should not exceed the ceiling.
                 Start Date: {stub.start_date}
                 End Date: {stub.end_date}
             """
@@ -88,7 +88,9 @@ def meso_agent(state: AgentState):
                 HumanMessage(f"""
                     Convert this plan to structured output.
                     There MUST be exactly {stub.num_weeks} microcycle stubs — one per week.
-                    
+                    MAXIMUM Yardage (per week): {yardage_ceiling} (based on age, phase and focus)
+                    You can adjust the weekly yardage as needed, but it should not exceed the ceiling.
+
                     {meso_proposal.content}
                 """)
         ]
@@ -100,6 +102,7 @@ def meso_agent(state: AgentState):
             try:
                 structured_plan = meso_fortmatter.invoke(structured_messages)
                 if structured_plan:
+                    print(structured_plan)
                     break
             except Exception as e:
                 print(f"Exception on attempt {i + 1}: {type(e).__name__}: {e}")
@@ -163,6 +166,62 @@ def micro_agent(state: AgentState):
                 micro_plan.append(workout_stub)
 
     return {"micro_plan": micro_plan, "error": None}
+
+def workout_generator_agent(workout_stub: state.WorkoutStub) -> Workout:
+    MAX_RETRIES = 3
+    rag_query = (
+        f"{workout_stub.focus.value} "
+        f"{workout_stub.phase.value} "
+        f"{workout_stub.stroke_focus.value} "
+        f"workout "
+        f"{workout_stub.target_yardage} yards"
+    )
+    try:
+        docs = retrieve_workouts(query=rag_query, k=3)
+        print(f"Retrieved {len(docs)} docs")
+        retrieved = "\n\n".join([doc.page_content for doc in docs])
+        
+        feedback = ""
+
+        for attempt in range(MAX_RETRIES):
+            prompt = f"""
+            You are an expert swim coach. Using the following reference workouts, 
+            generate a new {workout_stub.focus.value} {workout_stub.phase.value} {workout_stub.stroke_focus.value} 
+            workout targeting {workout_stub.target_yardage} yards.
+            Generate sets to hit that target, then leave total_yardage blank. 
+            It will be computed separately.
+
+            The generated workout MUST be within 5% of target yardage.
+            {feedback}
+
+            Reference workouts:
+            {retrieved}
+
+            Generate a new workout in the same format as the references above.
+            ONLY output the workout.  DON'T Provide anything else.
+            """
+
+            res = workout_llm.invoke(prompt)
+            tolerance = 0.05 * workout_stub.target_yardage
+            
+            if abs(res.total_yardage - workout_stub.target_yardage) <= tolerance:
+                return res
+            else:
+                diff = res.total_yardage - workout_stub.target_yardage
+                if diff > 0:
+                    feedback = (
+                        f"The previous workout was TOO SHORT by {diff} yards. "
+                        f"Increase volume."
+                    )
+                else:
+                    feedback = (
+                        f"The previous workout was TOO LONG by {-diff} yards. "
+                        f"Decrease volume."
+                    )
+        return res
+    except Exception as e:
+        print(f"workout_generator_agent failed: {type(e).__name__}: {e}")
+        return None
 
 def orchestrator_agent(state: AgentState):
     macro_result = macro_agent(state)

@@ -1,17 +1,15 @@
-from langchain_core.messages import AnyMessage
 from typing import Dict, TypedDict, List, Optional
 from enum import Enum
 import warnings
-from typing import Annotated, Literal
-from langgraph.graph.message import add_messages
+from typing import Literal
 from pydantic import BaseModel, model_validator, field_validator, computed_field
 from datetime import datetime, timedelta
 
 class PhaseType(str, Enum):
     GPP = "GPP"                 # General Physical Preparation
     SPP = "SPP"                 # Specific Physical Preparation
-    TAPER = "TAPER"             # Taper Phase
-    DE_LOAD = "DE_LOAD"         # De-Load/Recovery Phase
+    TAPER = "Taper"             # Taper Phase
+    DE_LOAD = "De-Load"         # De-Load/Recovery Phase
     
 class FocusType(str, Enum):
     AEROBIC = "Aerobic"
@@ -34,14 +32,6 @@ class SkillLevel(str, Enum):
     DEVELOPMENTAL = "Developmental"
     COMPETITIVE = "Competitive"
     ELITE = "Elite"
-
-def get_yard_progression_rate(skill_level: SkillLevel) -> float:
-    return {
-        SkillLevel.RECREATIONAL:  1.05,
-        SkillLevel.DEVELOPMENTAL: 1.08,
-        SkillLevel.COMPETITIVE:   1.10,
-        SkillLevel.ELITE:         1.15,
-    }.get(skill_level, 1.0)
 
 # Helper Functions & Constants
 def get_age_yardage_ceiling(age: int) -> int:
@@ -71,42 +61,54 @@ def get_phase_volume_multiplier(phase: PhaseType) -> float:
         PhaseType.TAPER:   0.50,
         PhaseType.DE_LOAD: 0.40,
     }.get(phase, 1.0)
-    
-def get_max_weight_room_sessions(phase: PhaseType, focus: FocusType, skill_level: SkillLevel, age_ceiling: int, current_yardage: int) -> int:
-    base_sessions = {
-        SkillLevel.RECREATIONAL: 2,
-        SkillLevel.DEVELOPMENTAL: 3,
-        SkillLevel.COMPETITIVE: 4,
-        SkillLevel.ELITE: 5,
-    }.get(skill_level, 2)
-    
-    phase_modifier = {
-        PhaseType.GPP:     0,  
-        PhaseType.SPP:    -1,  
-        PhaseType.TAPER:  -2,  
-        PhaseType.DE_LOAD:-2,  
-    }.get(phase, 0)
 
-    focus_modifier = {
-        FocusType.RECOVERY:  -2,
-        FocusType.AEROBIC:    0,
-        FocusType.TECHNIQUE:  0,
-        FocusType.ANAEROBIC: -1,
-        FocusType.POWER:     -1,
-    }.get(focus, 0)
+def get_yardage_ceiling(age: int, focus: FocusType, phase: PhaseType) -> int:
+    """Gets the adjusted yardage ceiling based on age, focus, and phase for each microcycle (weeks)"""
+    base_ceiling = get_age_yardage_ceiling(age)
+    intensity_multiplier = get_intensity_volume_multiplier(focus)
+    phase_multiplier = get_phase_volume_multiplier(phase)
     
-    load_ratio = current_yardage / age_ceiling
-    load_penalty = 0
-    if load_ratio > 0.85:
-        load_penalty = -1
-
-    calculated = base_sessions + phase_modifier + focus_modifier + load_penalty
-    
-    # Taper phase requires at least 1 session
-    if skill_level in [SkillLevel.COMPETITIVE, SkillLevel.ELITE] and phase == PhaseType.TAPER:
-        return max(1, calculated)
+    # calcate adjusted ceiling based on age, focus, and phase
+    adjusted_ceiling = int(base_ceiling * intensity_multiplier * phase_multiplier)
         
-    return max(0, calculated)
+    return adjusted_ceiling
+
+#  For future development
+# def get_max_weight_room_sessions(phase: PhaseType, focus: FocusType, skill_level: SkillLevel, age_ceiling: int, current_yardage: int) -> int:
+#     base_sessions = {
+#         SkillLevel.RECREATIONAL: 2,
+#         SkillLevel.DEVELOPMENTAL: 3,
+#         SkillLevel.COMPETITIVE: 4,
+#         SkillLevel.ELITE: 5,
+#     }.get(skill_level, 2)
+    
+#     phase_modifier = {
+#         PhaseType.GPP:     0,  
+#         PhaseType.SPP:    -1,  
+#         PhaseType.TAPER:  -2,  
+#         PhaseType.DE_LOAD:-2,  
+#     }.get(phase, 0)
+
+#     focus_modifier = {
+#         FocusType.RECOVERY:  -2,
+#         FocusType.AEROBIC:    0,
+#         FocusType.TECHNIQUE:  0,
+#         FocusType.ANAEROBIC: -1,
+#         FocusType.POWER:     -1,
+#     }.get(focus, 0)
+    
+    # load_ratio = current_yardage / age_ceiling
+    # load_penalty = 0
+    # if load_ratio > 0.85:
+    #     load_penalty = -1
+
+    # calculated = base_sessions + phase_modifier + focus_modifier + load_penalty
+    
+    # # Taper phase requires at least 1 session
+    # if skill_level in [SkillLevel.COMPETITIVE, SkillLevel.ELITE] and phase == PhaseType.TAPER:
+    #     return max(1, calculated)
+        
+    # return max(0, calculated)
     
 class Vitals(BaseModel):
     age: str
@@ -251,9 +253,8 @@ class AgentState(TypedDict):
     athlete_profile: AthleteProfile
     
     macro_plan: MacroCycle                                      # Big picture plan for the entire training cycle
-    meso_plan: List[MesoCycle]                              # More detailed plan for a specific training block (e.g., 4 weeks)
-    micro_plan: List[WorkoutStub]                            # Very detailed plan for a specific week
+    meso_plan: List[MesoCycle]                                  # More detailed plan for a specific training block (e.g., 4 weeks)
+    micro_plan: List[WorkoutStub]                               # Very detailed plan for a specific week
     daily_workouts: List[Workout]                               # Workouts for each day of the week
-    messages: Annotated[list[AnyMessage], add_messages]         # List of messages
     next_agent: str                                             # orchestrator writes this to route
     current_phase: Literal["macro", "meso", "micro", "daily", "done"]
